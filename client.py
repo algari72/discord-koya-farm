@@ -1,19 +1,18 @@
-from log_events import printimed
-import user.keytool as kt
+from log import *
+import keytool as kt
 import asyncio
 import discord
 import re
 
 client = discord.Client()
 
-client.uname = "skppy7#1176"
 client.cmmd = ''
 
 
 @client.event
 async def on_ready():
     printimed(f"Client: Bot routine started succesfully as {client.user}.")
-    printimed(f"User: User set as {client.uname}.")
+    printimed(f"User: User set name as {client.uname}.")
 
 
 @client.event
