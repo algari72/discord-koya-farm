@@ -1,62 +1,107 @@
-from log_events import *
-import user.keytool as uk
+from log_events import printimed
+import user.keytool as kt
 import asyncio
 import discord
 import re
 
-username = "skppy7#1176"
-
 client = discord.Client()
+
+client.uname = "skppy7#1176"
+client.cmmd = ''
 
 
 @client.event
 async def on_ready():
-    printimed(f"Bot routine started succesfully as {client.user}")
-    printimed("Sending initial commands...")
-    await tasks('ddm',0)
-    await tasks('fish',0)
-    await tasks('daily',0)
-
+    printimed(f"Client: Bot routine started succesfully as {client.user}.")
+    printimed(f"User: User set as {client.uname}.")
 
 
 @client.event
-async def on_message(message):
+async def on_message(msg):
 
-    if message.author.__str__() == "Koya#1050":
-        await analize_msg(message.content)
+    if msg.author.__str__() == client.uname:
+        if msg.content.startswith('/'):
+            await command_user(msg.content)
+            pass
+        elif msg.content.startswith('koya'):
+            pass
 
-    elif message.author.__str__() == username:
-        if message.content.startswith('/stop'):
-            await message.channel.send('Routine is closing...')
-            await client.close()
-            printimed("Bot routine closed!")
+        else:
+            pass
+
+    elif msg.author.__str__() == "Koya#1050":
+        await analize_msg(msg.content, client.cmmd)
     else:
-        return
+        pass
+
+async def command_user(cmmd):
+    cmmd = cmmd[1:]
+    if cmmd == 'stop':
+        await msg.channel.send('Client: Bot routine is closing...')
+        await client.close()
+        printimed("Client: Bot routine closed.")
+    elif cmmd == 'map':
+        await send_cmmd('ddm')
+        await send_cmmd('fish')
+        await send_cmmd('daily')
+        pass
+    else:
+        pass
+
+
+@client.event
+async def send_cmmd(cmmd):
+    def check(x):
+        return x.author.__str__() == "Koya#1050"
+
+    kt.send_command(cmmd)
+    await client.wait_for('message', check=check)
+    client.cmmd = cmmd
+    printimed("User: command \"{}\" was sent and confirmed.".format(cmmd))
 
 
 @client.event
 async def tasks(command, time):
-    printimed("Command {} will be implemented in {} seconds".format(command, time))
+    printimed("User: command \"{}\" will be implemented in {} seconds.".format(command, time))
     await asyncio.sleep(time)
-    uk.send_command(command)
-    printimed("Command {} was implemented".format(command))
-
+    await send_cmmd(command)
 
 
 @client.event
-async def analize_msg(msg):
+async def analize_msg(msg, cmmd):
     if re.search('rumor', msg):
-        await printimed('Bot detected, captcha needed...')
-    elif re.search('remind',msg):
         pass
-    elif re.search('den', msg, re.I):
-        await ddmc(msg)
-    elif re.search('fishing', msg):
-        await fishc(msg)
-    elif re.search('daily', msg, re.I):
-        await dailyc(msg)
     else:
-        printimed('Command not registered')
+        func = {
+            'ddm': ddmc,
+            'fish': fishc,
+            'daily': dailyc
+        }
+        await func[cmmd](msg)
+
+
+@client.event
+async def ddmc(msg):
+    t = getime_second(msg)
+    await tasks('ddm', t+2)
+
+
+@client.event
+async def fishc(msg):
+    t = getime_second(msg)
+    if t == -1:
+        await tasks('fish', 3602)
+    else:
+        await tasks('fish', t+2)
+
+
+@client.event
+async def dailyc(msg):
+    t = getime_second(msg)
+    if t == -1:
+        await tasks('daily', 86402)
+    else:
+        await tasks('daily', t+2)
 
 
 def getime_second(msg):
@@ -65,62 +110,6 @@ def getime_second(msg):
     if aux:
         for i in aux.groups():
             out += out*60 + int(i) if i else 0
-
         return out
     else:
-        return 0
-
-
-@client.event
-async def ddmc(msg):
-    printimed('Den Den Mushi scheduled')
-    await tasks('rmd ddm', 10)
-    await tasks('ddm', getime_second(msg)+2)
-
-
-@client.event
-async def fishc(msg):
-    await tasks('rmd fish', 15)
-    printimed('Fish scheduled')
-    if re.search('fishing', msg):
-        await tasks('fish', getime_second(msg)+2)
-    else:
-        printimed('Fished...')
-        await tasks('fish', 3602)
-
-
-@client.event
-async def dailyc(msg):
-    await tasks('rmd daily', 20)
-    printimed('Daily scheduled')
-    if re.search('received', msg):
-        await tasks('daily', getime_second(msg)+2)
-    else:
-        await tasks('daily', 86402)
-        printimed('Got daily bonus...')
-
-'''
-def repc(msg):
-    pass
-
-def btlac(msg):
-    pass
-
-def boatec(msg):
-    pass
-
-def boatusec(msg):
-    pass
-
-def chapc(msg):
-    pass
-
-def chapnextc(msg):
-    pass
-
-def ptc(msg):
-    pass
-
-def votec(msg):
-    pass
-'''
+        return -1

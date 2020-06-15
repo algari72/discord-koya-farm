@@ -1,4 +1,3 @@
-from log_events import *
 from client import client
 from user.keytool import send_command
 import os
