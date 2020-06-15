@@ -8,3 +8,10 @@ def printimed(s):
     with open('files/event.log', 'a') as f:
         f.write(t + ' ' + str(s))
         f.write('\n')
+
+def save_msg(msg, cmmd):
+    with open('files/msg.log', 'a') as f:
+        f.write('_'*80 + '\n\n')
+        f.write(cmmd + '\n\n')
+        f.write(msg.__str__() + '\n\n')
+        f.write(msg.content + '\n\n')

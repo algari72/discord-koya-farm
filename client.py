@@ -7,6 +7,11 @@ import re
 client = discord.Client()
 
 client.cmmd = ''
+client.tasked = {
+                    'ddm':False,
+                    'fish':False,
+                    'daily':False
+}
 
 
 @client.event
@@ -20,7 +25,7 @@ async def on_message(msg):
 
     if msg.author.__str__() == client.uname:
         if msg.content.startswith('/'):
-            await command_user(msg.content)
+            await command_user(msg)
             pass
         elif msg.content.startswith('koya'):
             pass
@@ -29,11 +34,14 @@ async def on_message(msg):
             pass
 
     elif msg.author.__str__() == "Koya#1050":
+        save_msg(msg, client.cmmd)
         await analize_msg(msg.content, client.cmmd)
     else:
         pass
 
-async def command_user(cmmd):
+
+async def command_user(msg):
+    cmmd = msg.content
     cmmd = cmmd[1:]
     if cmmd == 'stop':
         await msg.channel.send('Client: Bot routine is closing...')
@@ -48,7 +56,6 @@ async def command_user(cmmd):
         pass
 
 
-@client.event
 async def send_cmmd(cmmd):
     def check(x):
         return x.author.__str__() == "Koya#1050"
@@ -59,17 +66,18 @@ async def send_cmmd(cmmd):
     printimed("User: command \"{}\" was sent and confirmed.".format(cmmd))
 
 
-@client.event
-async def tasks(command, time):
-    printimed("User: command \"{}\" will be implemented in {} seconds.".format(command, time))
-    await asyncio.sleep(time)
-    await send_cmmd(command)
+async def tasks(cmmd, time):
+    if not client.tasked[cmmd]:
+        printimed("User: command \"{}\" will be implemented in {} seconds.".format(cmmd, time))
+        client.tasked[cmmd] = True
+        await asyncio.sleep(time)
+        client.tasked[cmmd] = False
+        await send_cmmd(cmmd)
 
 
-@client.event
 async def analize_msg(msg, cmmd):
     if re.search('rumor', msg):
-        pass
+        printimed("User: Captcha ")
     else:
         func = {
             'ddm': ddmc,
@@ -79,13 +87,11 @@ async def analize_msg(msg, cmmd):
         await func[cmmd](msg)
 
 
-@client.event
 async def ddmc(msg):
     t = getime_second(msg)
     await tasks('ddm', t+2)
 
 
-@client.event
 async def fishc(msg):
     t = getime_second(msg)
     if t == -1:
@@ -94,7 +100,6 @@ async def fishc(msg):
         await tasks('fish', t+2)
 
 
-@client.event
 async def dailyc(msg):
     t = getime_second(msg)
     if t == -1:
