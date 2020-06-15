@@ -78,6 +78,8 @@ async def command_user(msg):
             'fish': -1,
             'daily': -1
         }
+    elif cmmd == 'isactive':
+        await msg.channel.send('Still active...')
 
     else:
         pass
