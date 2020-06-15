@@ -2,7 +2,6 @@ import os
 
 channel_user = "https://discord.com/channels/387716250026901504/721327594385047625"
 
-
 def txt_to_keysym(txt):
     s = ''
     keysym = {
@@ -117,7 +116,6 @@ def txt_to_keysym(txt):
         'Q': 'Q',
         '\n': 'Return'
     }
-
     '''
     keysym = {' ': 'space',
          '!': 'exclam',
@@ -155,13 +153,12 @@ def txt_to_keysym(txt):
          '\x08': 'BackSpace',
          '\n': 'Return'}
     '''
-
     for i in txt:
         s += ' ' + keysym[i]
 
     return s[1:]
 
 
-def send_command(window, txt):
+def send_command(txt,window=33555185):
     aux = txt_to_keysym('koya ' + txt + '\n')
     os.system('xdotool key --window {} {}'.format(window, aux))

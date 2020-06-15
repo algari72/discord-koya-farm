@@ -17,8 +17,8 @@ import re
 
 
 
-async def tasks(command, time):
-    await asyncio.sleep(time)
+def tasks(command, time):
+    asyncio.sleep(time)
     printimed(command+'implemented')
 
 def analize_msg(msg):
