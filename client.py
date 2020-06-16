@@ -1,4 +1,5 @@
 from log import *
+from random import random
 import keytool as kt
 import asyncio
 import discord
@@ -57,7 +58,9 @@ async def command_user(msg):
 
     elif cmmd == 'map':
         await send_cmmd('ddm')
+        await asyncio.sleep(5)
         await send_cmmd('fish')
+        await asyncio.sleep(5)
         await send_cmmd('daily')
 
     elif cmmd == 'time':
@@ -98,7 +101,7 @@ async def send_cmmd(cmmd):
 async def tasks(cmmd, time):
 
     if not client.tasked[cmmd]:
-
+        time = int(time)
         printimed("User: command \"{}\" will be implemented in {} seconds.".format(cmmd, time))
         client.tasked[cmmd] = True
         client.timed[cmmd] = t.time() + time
@@ -110,7 +113,18 @@ async def tasks(cmmd, time):
 async def analize_msg(msg, cmmd):
 
     if re.search('/captcha', msg):
+        def check(x):
+            return x.author.__str__() == client.uname and msg.content.startswith('/free')
+
+        client.tasked = {
+            'ddm': True,
+            'fish': True,
+            'daily': True
+        }
+
         printimed("User: Captcha needed")
+        await client.wait_for('message', check=check)
+
 
     elif re.search('rmd',cmmd):
         pass
@@ -125,30 +139,27 @@ async def analize_msg(msg, cmmd):
 
 
 async def ddmc(msg):
-
+    await send_cmmd('rmd ddm')
     t = getime_second(msg)
-    send_cmmd('rmd ddm')
-    await tasks('ddm', t+5)
+    await tasks('ddm', t+5*random())
 
 
 async def fishc(msg):
-
+    await send_cmmd('rmd fish')
     t = getime_second(msg)
-    send_cmmd('rmd fish')
     if t == -1:
-        await tasks('fish', 3605)
+        await tasks('fish', 3600+10*random())
     else:
-        await tasks('fish', t+5)
+        await tasks('fish', t+10*random())
 
 
 async def dailyc(msg):
-
+    await send_cmmd('rmd daily')
     t = getime_second(msg)
-    send_cmmd('rmd daily')
     if t == -1:
-        await tasks('daily', 86405)
+        await tasks('daily', 86400+10*random())
     else:
-        await tasks('daily', t+5)
+        await tasks('daily', t+10*random())
 
 
 def getime_second(msg):

@@ -1,6 +1,10 @@
 import os
 
-window=33555185
+with open('files/window_info','r'):
+    s = f.read()
+    s = map(lambda x: x.split(' '), s.plit('\n'))
+
+window=s[0][1]
 
 def txt_to_keysym(txt):
 
