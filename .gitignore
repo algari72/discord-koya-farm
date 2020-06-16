@@ -1,9 +1,12 @@
 commads_responses
 Untitled.ipynb
-koya_bot_env
-__pycache__
+koya_bot_env/
+__pycache__/
 testing.py
-.ipynb_checkpoints
+.ipynb_checkpoints/
 log_config
 get_window
 koya2.config
+Koya_files/
+Koya.html
+Untitled Document 1

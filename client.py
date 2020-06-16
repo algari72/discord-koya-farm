@@ -109,9 +109,11 @@ async def tasks(cmmd, time):
 
 async def analize_msg(msg, cmmd):
 
-    if re.search('rumor', msg):
-        printimed("User: Captcha ")
+    if re.search('/captcha', msg):
+        printimed("User: Captcha needed")
 
+    elif re.search('rmd',cmmd):
+        pass
     else:
         func = {
             'ddm': ddmc,
@@ -125,25 +127,28 @@ async def analize_msg(msg, cmmd):
 async def ddmc(msg):
 
     t = getime_second(msg)
-    await tasks('ddm', t+2)
+    send_cmmd('rmd ddm')
+    await tasks('ddm', t+5)
 
 
 async def fishc(msg):
 
     t = getime_second(msg)
+    send_cmmd('rmd fish')
     if t == -1:
-        await tasks('fish', 3602)
+        await tasks('fish', 3605)
     else:
-        await tasks('fish', t+2)
+        await tasks('fish', t+5)
 
 
 async def dailyc(msg):
 
     t = getime_second(msg)
+    send_cmmd('rmd daily')
     if t == -1:
-        await tasks('daily', 86402)
+        await tasks('daily', 86405)
     else:
-        await tasks('daily', t+2)
+        await tasks('daily', t+5)
 
 
 def getime_second(msg):
